@@ -6,7 +6,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import com.zetcode.Geist;
 
 public class Board extends JPanel implements ActionListener {
 
@@ -17,11 +16,11 @@ public class Board extends JPanel implements ActionListener {
     private final int bildschirmGroese = feldAnzahl * feldGroese; // wird demzufolge auch dynamisch sein
     private final int animationsDauer = 2;
 
-    private final int animationsAnzahl = 4;
     private final int maxGeisterAnzahl = 12;
-    private final int pacmanGeschwindigkeit = 6;
+
     // In dieser Array befinden sich die Informationen über das Spielfeld
     // Hier sind keine Informationen über die Lage von den Geistern oder Pacman enthalten
+    // !!Es handelt sich um eine eindimensionale array, unglaublich!!
     private final short[] levelData = {
             19, 26, 26, 26, 18, 18, 18, 18, 22, 0, 0, 0, 19, 18, 22,
             21, 0, 0, 0, 17, 16, 16, 16, 16, 18, 18, 18, 16, 16, 20,
@@ -44,7 +43,6 @@ public class Board extends JPanel implements ActionListener {
     private final int[] zugelasseneGeschwindigkeiten = {1, 2, 3, 4, 6, 8};
     private final int maximaleGeschwindigkeit = zugelasseneGeschwindigkeiten.length;
     private Dimension d;
-    private Image ii;
     private Color feldFarbe;
     private boolean imSpiel = false;
     private boolean tot = false;
@@ -54,7 +52,7 @@ public class Board extends JPanel implements ActionListener {
     private int geisterAnzahl = 6;
     private int leben, score;
     private int[] dx, dy;
-    private Geist[] geisterArray;
+    private Geist[] geisterArray; // Hier sind alle Geister enthalten
     private Image geist;
     private Image pacman1up, pacman2up, pacman3up, pacman4up;
     private Image pacman1right, pacman2right, pacman3right, pacman4right;
@@ -113,6 +111,7 @@ public class Board extends JPanel implements ActionListener {
             pacAnimCount = animationsDauer;
             pacmanAnimPos = pacmanAnimPos + pacAnimDir;
 
+            int animationsAnzahl = 4;
             if (pacmanAnimPos == (animationsAnzahl -1) || pacmanAnimPos == 0) {
                 pacAnimDir = -pacAnimDir;
             }
@@ -267,6 +266,7 @@ public class Board extends JPanel implements ActionListener {
             geisterArray[i].y = geisterArray[i].y + (geisterArray[i].dy * geisterArray[i].geschwindigkeit);
             drawGhost(g2d, geisterArray[i].x + 1, geisterArray[i].y + 1);
 
+            // Hier wird die Kollision zwischen Pacman und einem Geist registriert
             if (pacman_x > (geisterArray[i].x - 12) && pacman_x < (geisterArray[i].x + 12)
                     && pacman_y > (geisterArray[i].y - 12) && pacman_y < (geisterArray[i].y + 12)
                     && imSpiel) {
@@ -293,20 +293,26 @@ public class Board extends JPanel implements ActionListener {
             view_dy = pacmand_y;
         }
 
+        // Hier wird nachgesehen, ob sich Pacmans position genau mit den Feldern, auf denen er gehen kann überlappt
         if (pacman_x % feldGroese == 0 && pacman_y % feldGroese == 0) {
             pos = pacman_x / feldGroese + feldAnzahl * (pacman_y / feldGroese);
             ch = screenData[pos];
 
+            // Hier wird überprüft ob Pacman dabei ist einen Punkt zu essen, ist dies der Fall
+            // dann wird der Punkt gelöscht und Pacman bekommt einen Punkt
             if ((ch & 16) != 0) {
                 screenData[pos] = (short) (ch & 15);
                 score++;
             }
 
+            // Hier wird geschaut ob der Spieler will, dass sich Pacman in eine gewisse Richtung bewegt
             if (req_dx != 0 || req_dy != 0) {
+                // Hier wird ermittelt ob Pacman in diese Richtung drehen darf, oder ob sich dort eine Wand befindet
                 if (!((req_dx == -1 && req_dy == 0 && (ch & 1) != 0)
                         || (req_dx == 1 && req_dy == 0 && (ch & 4) != 0)
                         || (req_dx == 0 && req_dy == -1 && (ch & 2) != 0)
                         || (req_dx == 0 && req_dy == 1 && (ch & 8) != 0))) {
+                    // Falls der "Zug legal ist" wird er ausgeführt
                     pacmand_x = req_dx;
                     pacmand_y = req_dy;
                     view_dx = pacmand_x;
@@ -314,15 +320,19 @@ public class Board extends JPanel implements ActionListener {
                 }
             }
 
-            // Check for standstill
+            // Hier wird geschaut ob Pacman dabei ist in eine Wand zu "laufen"
             if ((pacmand_x == -1 && pacmand_y == 0 && (ch & 1) != 0)
                     || (pacmand_x == 1 && pacmand_y == 0 && (ch & 4) != 0)
                     || (pacmand_x == 0 && pacmand_y == -1 && (ch & 2) != 0)
                     || (pacmand_x == 0 && pacmand_y == 1 && (ch & 8) != 0)) {
+                // Falls dies der Fall ist, wird seine Bewegung auf Null gesetzt -> er bleibt stehen
+                // und läuft nicht in die Wand
                 pacmand_x = 0;
                 pacmand_y = 0;
             }
         }
+        // Hier wird die Position verändert
+        int pacmanGeschwindigkeit = 6;
         pacman_x = pacman_x + pacmanGeschwindigkeit * pacmand_x;
         pacman_y = pacman_y + pacmanGeschwindigkeit * pacmand_y;
     }
@@ -560,7 +570,6 @@ public class Board extends JPanel implements ActionListener {
             showIntroScreen(g2d);
         }
 
-        g2d.drawImage(ii, 5, 5, this);
         Toolkit.getDefaultToolkit().sync();
         g2d.dispose();
     }
