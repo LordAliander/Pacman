@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import com.zetcode.Geist;
 
 public class Board extends JPanel implements ActionListener {
 
@@ -53,7 +54,7 @@ public class Board extends JPanel implements ActionListener {
     private int geisterAnzahl = 6;
     private int leben, score;
     private int[] dx, dy;
-    private int[] ghost_x, ghost_y, ghost_dx, ghost_dy, ghostSpeed;
+    private Geist[] geisterArray;
     private Image geist;
     private Image pacman1up, pacman2up, pacman3up, pacman4up;
     private Image pacman1right, pacman2right, pacman3right, pacman4right;
@@ -90,11 +91,10 @@ public class Board extends JPanel implements ActionListener {
         d = new Dimension(400, 400);
         // In jedem Index dieser Array ist Geisterspezifische Information enthalten
         // Dies könnte und sollte man mit einer Klasse austauschen
-        ghost_x = new int[maxGeisterAnzahl];
-        ghost_dx = new int[maxGeisterAnzahl];
-        ghost_y = new int[maxGeisterAnzahl];
-        ghost_dy = new int[maxGeisterAnzahl];
-        ghostSpeed = new int[maxGeisterAnzahl];
+        geisterArray = new Geist[maxGeisterAnzahl];
+        for (int i = 0; i < geisterArray.length; ++i)
+            geisterArray[i] = new Geist();
+
         dx = new int[4];
         dy = new int[4];
         timer = new Timer(40, this);
@@ -206,34 +206,34 @@ public class Board extends JPanel implements ActionListener {
         int count;
 
         for (i = 0; i < geisterAnzahl; i++) {
-            if (ghost_x[i] % feldGroese == 0 && ghost_y[i] % feldGroese == 0) {
+            if (geisterArray[i].x % feldGroese == 0 && geisterArray[i].y % feldGroese == 0) {
 
-                pos = ghost_x[i] / feldGroese + feldAnzahl * (ghost_y[i] / feldGroese);
+                pos = geisterArray[i].x / feldGroese + feldAnzahl * (geisterArray[i].y / feldGroese);
 
                 count = 0;
 
                 /*
                  * This can be compressed into something more concise.
                  */
-                if ((screenData[pos] & 1) == 0 && ghost_dx[i] != 1) {
+                if ((screenData[pos] & 1) == 0 && geisterArray[i].dx != 1) {
                     dx[count] = -1;
                     dy[count] = 0;
                     count++;
                 }
 
-                if ((screenData[pos] & 2) == 0 && ghost_dy[i] != 1) {
+                if ((screenData[pos] & 2) == 0 && geisterArray[i].dy != 1) {
                     dx[count] = 0;
                     dy[count] = -1;
                     count++;
                 }
 
-                if ((screenData[pos] & 4) == 0 && ghost_dx[i] != -1) {
+                if ((screenData[pos] & 4) == 0 && geisterArray[i].dx != -1) {
                     dx[count] = 1;
                     dy[count] = 0;
                     count++;
                 }
 
-                if ((screenData[pos] & 8) == 0 && ghost_dy[i] != -1) {
+                if ((screenData[pos] & 8) == 0 && geisterArray[i].dy != -1) {
                     dx[count] = 0;
                     dy[count] = 1;
                     count++;
@@ -242,11 +242,11 @@ public class Board extends JPanel implements ActionListener {
                 if (count == 0) {
 
                     if ((screenData[pos] & 15) == 15) {
-                        ghost_dx[i] = 0;
-                        ghost_dy[i] = 0;
+                        geisterArray[i].dx = 0;
+                        geisterArray[i].dy = 0;
                     } else {
-                        ghost_dx[i] = -ghost_dx[i];
-                        ghost_dy[i] = -ghost_dy[i];
+                        geisterArray[i].dx = -geisterArray[i].dx;
+                        geisterArray[i].dy = -geisterArray[i].dy;
                     }
 
                 } else {
@@ -257,18 +257,18 @@ public class Board extends JPanel implements ActionListener {
                         count = 3;
                     }
 
-                    ghost_dx[i] = dx[count];
-                    ghost_dy[i] = dy[count];
+                    geisterArray[i].dx = dx[count];
+                    geisterArray[i].dy = dy[count];
                 }
 
             }
 
-            ghost_x[i] = ghost_x[i] + (ghost_dx[i] * ghostSpeed[i]);
-            ghost_y[i] = ghost_y[i] + (ghost_dy[i] * ghostSpeed[i]);
-            drawGhost(g2d, ghost_x[i] + 1, ghost_y[i] + 1);
+            geisterArray[i].x = geisterArray[i].x + (geisterArray[i].dx * geisterArray[i].geschwindigkeit);
+            geisterArray[i].y = geisterArray[i].y + (geisterArray[i].dy * geisterArray[i].geschwindigkeit);
+            drawGhost(g2d, geisterArray[i].x + 1, geisterArray[i].y + 1);
 
-            if (pacman_x > (ghost_x[i] - 12) && pacman_x < (ghost_x[i] + 12)
-                    && pacman_y > (ghost_y[i] - 12) && pacman_y < (ghost_y[i] + 12)
+            if (pacman_x > (geisterArray[i].x - 12) && pacman_x < (geisterArray[i].x + 12)
+                    && pacman_y > (geisterArray[i].y - 12) && pacman_y < (geisterArray[i].y + 12)
                     && imSpiel) {
 
                 tot = true;
@@ -480,11 +480,11 @@ public class Board extends JPanel implements ActionListener {
         // Zudem bekommen sie eine Geschwindigkeit
         for (i = 0; i < geisterAnzahl; i++) {
             // Dies sind die Spawn Koordinaten
-            ghost_y[i] = 4 * feldGroese;
-            ghost_x[i] = 2 * feldGroese;
+            geisterArray[i].y = 4 * feldGroese;
+            geisterArray[i].x = 2 * feldGroese;
             // Wozu sind diese beiden Variablen
-            ghost_dy[i] = 0;
-            ghost_dx[i] = dx;
+            geisterArray[i].dy = 0;
+            geisterArray[i].dx = dx;
             dx = -dx;
             // Hier wird jedem Geist eine eigene Geschwindigkeit zugeordnet
             random = (int) (Math.random() * (currentSpeed + 1));
@@ -493,7 +493,7 @@ public class Board extends JPanel implements ActionListener {
                 random = currentSpeed;
             }
 
-            ghostSpeed[i] = zugelasseneGeschwindigkeiten[random];
+            geisterArray[i].geschwindigkeit = zugelasseneGeschwindigkeiten[random];
         }
         // Spawn Koordidaten von Pacman
         pacman_x = 7 * feldGroese;
