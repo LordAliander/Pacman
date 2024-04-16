@@ -13,7 +13,7 @@ public class Main extends JFrame {
         add(new Board());
         setTitle("Pacman");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(380, 420);
+        setSize(624, 690);
         setLocationRelativeTo(null);
     }
 

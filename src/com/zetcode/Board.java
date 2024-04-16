@@ -22,21 +22,32 @@ public class Board extends JPanel implements ActionListener {
     // Hier sind keine Informationen über die Lage von den Geistern oder Pacman enthalten
     // !!Es handelt sich um eine eindimensionale array, unglaublich!!
     private final short[] levelData = {
-            19, 26, 26, 26, 18, 18, 18, 18, 22, 0, 0, 0, 19, 18, 22,
-            21, 0, 0, 0, 17, 16, 16, 16, 16, 18, 18, 18, 16, 16, 20,
-            21, 0, 0, 0, 17, 16, 16, 16, 16, 16, 16, 16, 16, 16, 20,
-            21, 0, 0, 0, 17, 16, 16, 24, 16, 16, 16, 16, 16, 16, 20,
-            17, 18, 18, 18, 16, 16, 20, 0, 17, 16, 16, 16, 16, 16, 20,
-            17, 16, 16, 16, 16, 16, 20, 0, 17, 16, 16, 16, 16, 24, 20,
-            25, 16, 16, 16, 24, 24, 28, 0, 25, 24, 24, 16, 20, 0, 21,
-            1, 17, 16, 20, 0, 0, 0, 0, 0, 0, 0, 17, 20, 0, 21,
-            1, 17, 16, 16, 18, 18, 22, 0, 19, 18, 18, 16, 20, 0, 21,
-            1, 17, 16, 16, 16, 16, 20, 0, 17, 16, 16, 16, 20, 0, 21,
-            1, 17, 16, 16, 16, 16, 20, 0, 17, 16, 16, 16, 20, 0, 21,
-            1, 17, 16, 16, 16, 16, 16, 18, 16, 16, 16, 16, 20, 0, 21,
-            1, 17, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 20, 0, 21,
-            1, 25, 24, 24, 24, 24, 24, 24, 24, 24, 16, 16, 16, 18, 20,
-            9, 8, 8, 8, 8, 8, 8, 8, 8, 8, 25, 24, 24, 24, 28
+            19, 26, 26, 26, 18, 18, 26, 26, 18, 18, 18, 22,  2,  2, 19, 18, 18, 18, 26, 26, 18, 18, 26, 26, 26, 22,
+            21,  0,  0,  0, 17, 20,  0,  0, 17, 16, 16, 20,  0,  0, 17, 16, 16, 20,  0,  0, 17, 20,  0,  0,  0, 21,
+            21,  0,  0,  0, 17, 20,  0,  0, 17, 16, 16, 20,  0,  0, 17, 16, 16, 20,  0,  0, 17, 20,  0,  0,  0, 21,
+            17, 18, 26, 26, 24, 24, 26, 26, 24, 24, 16, 20,  0,  0, 17, 16, 24, 24, 26, 26, 24, 24, 26, 26, 18, 20,
+            17, 20,  0,  0,  0,  0,  0,  0,  0,  0, 17, 16, 18, 18, 16, 20,  0,  0,  0,  0,  0,  0,  0,  0, 17, 20,
+            17, 20,  0,  0,  0,  0,  0,  0,  0,  0, 17, 16, 16, 16, 16, 20,  0,  0,  0,  0,  0,  0,  0,  0, 17, 20,
+            17, 20,  0,  0, 19, 18, 18, 18, 26, 26, 16, 16, 16, 16, 16, 16, 26, 26, 18, 18, 18, 22,  0,  0, 17, 20,
+            17, 20,  0,  0, 17, 16, 16, 20,  0,  0, 17, 24, 24, 24, 24, 20,  0,  0, 17, 16, 16, 20,  0,  0, 17, 20,
+            17, 20,  0,  0, 17, 16, 16, 24, 18, 18, 20,  0,  0,  0,  0, 17, 18, 18, 24, 16, 16, 20,  0,  0, 17, 20,
+            24, 24, 26, 26, 24, 16, 20,  0, 17, 16, 20,  0,  0,  0,  0, 17, 16, 20,  0, 17, 16, 24, 26, 26, 24, 24,
+             0,  0,  0,  0,  0, 17, 20,  0, 17, 16, 16, 18, 18, 18, 18, 16, 16, 20,  0, 17, 20,  0,  0,  0,  0,  0,
+             0,  0,  0,  0,  0, 17, 20,  0, 17, 16, 24, 24, 16, 16, 24, 24, 16, 20,  0, 17, 20,  0,  0,  0,  0,  0,
+             2,  2,  2,  2,  2, 16, 20,  0, 17, 20,  3,  2,  0,  0,  2,  6, 17, 20,  0, 17, 16,  2,  2,  2,  2,  2,
+             8,  8,  8,  8,  8, 16, 20,  0, 17, 20,  9,  8,  8,  8,  8, 12, 17, 20,  0, 17, 16,  8,  8,  8,  8,  8,
+             0,  0,  0,  0,  0, 17, 20,  0, 17, 16, 26, 26, 26, 26, 26, 26, 16, 20,  0, 17, 20,  0,  0,  0,  0,  0,
+             0,  0,  0,  0,  0, 17, 20,  0, 17, 20,  0,  0,  0,  0,  0,  0, 17, 20,  0, 17, 20,  0,  0,  0,  0,  0,
+            19, 18, 18, 26, 18, 16, 20,  0, 17, 20,  0,  0,  0,  0,  0,  0, 17, 20,  0, 17, 16,  18, 26, 18, 18, 22,
+            17, 16, 28,  0, 17, 16, 16, 18, 16, 16, 18, 22,  0,  0, 19, 18, 16, 16, 18, 16, 16, 20,  0, 25, 16, 20,
+            17, 20,  0,  0, 17, 24, 24, 24, 24, 16, 16, 20,  0,  0, 17, 16, 16, 24, 24, 24, 24, 20,  0,  0, 17, 20,
+            17, 24, 18, 18, 20,  0,  0,  0,  0, 17, 24, 24, 26, 26, 24, 24, 20,  0,  0,  0,  0, 17, 18, 18, 24, 20,
+            21,  0, 17, 16, 20,  0,  0,  0,  0, 21,  0,  0,  0,  0,  0,  0, 21,  0,  0,  0,  0, 17, 16, 20,  0, 21,
+            21,  0, 17, 16, 20,  0,  0,  0,  0, 21,  0,  0,  0,  0,  0,  0, 21,  0,  0,  0,  0, 17, 16, 20,  0, 21,
+            21,  0, 17, 16, 16, 18, 18, 22,  0, 17, 18, 22,  0,  0, 19, 18, 20,  0, 19, 18, 18, 16, 16, 20,  0, 21,
+            21,  0, 25, 24, 24, 24, 16, 20,  0, 17, 16, 20,  0,  0, 17, 16, 20,  0, 17, 16, 24, 24, 24, 28,  0, 21,
+            21,  0,  0,  0,  0,  0, 17, 16, 18, 16, 16, 24, 26, 26, 24, 16, 16, 18, 16, 20,  0,  0,  0,  0,  0, 21,
+            25, 26, 26, 26, 26, 26, 24, 24, 24, 24, 28,  0,  0,  0,  0, 25, 24, 24, 24, 24, 26, 26, 26, 26, 26, 28
     };
 
     // Hier sind alle möglichen Geistergeschwindigkeiten enthalten
@@ -86,7 +97,7 @@ public class Board extends JPanel implements ActionListener {
         // Hier werden alle wichtigen Variabeln in den Speicher geladen
         screenData = new short[feldAnzahl * feldAnzahl];
         feldFarbe = new Color(5, 100, 5);
-        d = new Dimension(400, 400);
+        d = new Dimension(624, 690);
         // In jedem Index dieser Array ist Geisterspezifische Information enthalten
         // Dies könnte und sollte man mit einer Klasse austauschen
         geisterArray = new Geist[maxGeisterAnzahl];
@@ -152,7 +163,7 @@ public class Board extends JPanel implements ActionListener {
         g.setFont(smallFont);
         g.setColor(new Color(96, 128, 255));
         s = "Score: " + score;
-        g.drawString(s, bildschirmGroese / 2 + 96, bildschirmGroese + 16);
+        g.drawString(s, bildschirmGroese / 2 + 230, bildschirmGroese + 20);
         // Für jedes Leben, das noch übrig ist wird ein Pacman gezeichnet
         for (i = 0; i < leben; i++) {
             g.drawImage(pacman3left, i * 28 + 8, bildschirmGroese + 1, this);
@@ -433,27 +444,35 @@ public class Board extends JPanel implements ActionListener {
                 g2d.setColor(feldFarbe);
                 g2d.setStroke(new BasicStroke(2));
 
+                // zeichnet eine linke Wand
                 if ((screenData[i] & 1) != 0) {
                     g2d.drawLine(x, y, x, y + feldGroese - 1);
                 }
-
+                // zeichnet eine obere Wand
                 if ((screenData[i] & 2) != 0) {
                     g2d.drawLine(x, y, x + feldGroese - 1, y);
                 }
-
+                // zeichnet eine rechte Wand
                 if ((screenData[i] & 4) != 0) {
                     g2d.drawLine(x + feldGroese - 1, y, x + feldGroese - 1,
                             y + feldGroese - 1);
                 }
-
+                // zeichnet eine untere Wand
                 if ((screenData[i] & 8) != 0) {
                     g2d.drawLine(x, y + feldGroese - 1, x + feldGroese - 1,
                             y + feldGroese - 1);
                 }
 
+                // zeichnet einen Punkt
                 if ((screenData[i] & 16) != 0) {
                     g2d.setColor(punktFarbe);
                     g2d.fillRect(x + 11, y + 11, 2, 2);
+                }
+
+                // zeichnet einen custom power up
+                if ((screenData[i] & 32) != 0) {
+                    g2d.setColor(punktFarbe);
+                    g2d.fillOval(x+7, y+7, 8, 8);
                 }
 
                 i++;
@@ -490,8 +509,8 @@ public class Board extends JPanel implements ActionListener {
         // Zudem bekommen sie eine Geschwindigkeit
         for (i = 0; i < geisterAnzahl; i++) {
             // Dies sind die Spawn Koordinaten
-            geisterArray[i].y = 4 * feldGroese;
-            geisterArray[i].x = 2 * feldGroese;
+            geisterArray[i].y = 13 * feldGroese;
+            geisterArray[i].x = 13 * feldGroese;
             // Wozu sind diese beiden Variablen
             geisterArray[i].dy = 0;
             geisterArray[i].dx = dx;
@@ -506,8 +525,8 @@ public class Board extends JPanel implements ActionListener {
             geisterArray[i].geschwindigkeit = zugelasseneGeschwindigkeiten[random];
         }
         // Spawn Koordidaten von Pacman
-        pacman_x = 7 * feldGroese;
-        pacman_y = 11 * feldGroese;
+        pacman_x = 13 * feldGroese;
+        pacman_y = 19 * feldGroese;
         // Anfangsgeschwindigkeit von Pacman
         pacmand_x = 0;
         pacmand_y = 0;
@@ -576,7 +595,7 @@ public class Board extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
+        // Diese Funktion muss man neu definieren, wenn man den Action listener nutzt
         repaint();
     }
 
@@ -638,5 +657,4 @@ public class Board extends JPanel implements ActionListener {
             }
         }
     }
-
 }
