@@ -1,23 +1,23 @@
-1. understand the code
+1. understand the code DONE
 2. divide code into different files
---> replace EVENT with something that is supported, EVENT is deprecated
+--> replace EVENT with something that is supported, EVENT is deprecated DONE (erased function)
 3. comment the code and translate into german
-4. design new art for the game (ghost, pacman, power-ups)
+4. design new art for the game (ghost, pacman, power-ups) ONLY POWER-UPS MISSING
 5. change the game logic
-    5.1 make a new, bigger map
+    5.1 make a new, bigger map DONE
     5.2 insert power_ups and other things
     5.3 portal, side to side
     5.4 "smart" ghosts
-    5.5 new point counting system and make game more difficult
+    5.5 new point counting system and make game more difficult NOT NEEDED
 6. finalize the game and explain it to polar bear
 
 7. optional -> add sound to the game, and a leaderboard (stored locally)
 
 
 Make code more readable and understanding it:
--> make a pacman class
--> create a ghost class
--> make the code work with the new "data"
--> divide things for GUI, logic and other things into multiple files
+-> make a pacman class DOES IT MAKE SENSE?
+-> create a ghost class DONE
+-> make the code work with the new "data" DONE FOR GHOSTS
+-> divide things for GUI, logic and other things into multiple files CISS
 
 

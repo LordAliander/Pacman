@@ -282,6 +282,11 @@ public class Board extends JPanel implements ActionListener {
                 }
 
             }
+            //Portal
+            if (geisterArray[i].x > 630)
+                geisterArray[i].x = 0;
+            else if (geisterArray[i].x < 0)
+                geisterArray[i].x = 630;
 
             geisterArray[i].x = geisterArray[i].x + (geisterArray[i].dx * geisterArray[i].geschwindigkeit);
             geisterArray[i].y = geisterArray[i].y + (geisterArray[i].dy * geisterArray[i].geschwindigkeit);
@@ -360,7 +365,13 @@ public class Board extends JPanel implements ActionListener {
                 pacmand_y = 0;
             }
         }
+        // Portal
+        if (pacman_x > 630)
+            pacman_x = 0; // Negativer Wert wäre schön, leider nicht möglich (es buggt) :(
+        else if (pacman_x < -5)
+            pacman_x = 630;
         // Hier wird die Position verändert
+        
         int pacmanGeschwindigkeit = 6;
         pacman_x = pacman_x + pacmanGeschwindigkeit * pacmand_x;
         pacman_y = pacman_y + pacmanGeschwindigkeit * pacmand_y;
