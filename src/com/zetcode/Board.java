@@ -52,7 +52,7 @@ public class Board extends JPanel implements ActionListener {
     };
 
     // Hier sind alle möglichen Geistergeschwindigkeiten enthalten
-    private final int[] zugelasseneGeschwindigkeiten = {1, 2, 3, 4, 6, 8};
+    private final int[] zugelasseneGeschwindigkeiten = {2, 3, 4, 6, 8};
     private final int maximaleGeschwindigkeit = zugelasseneGeschwindigkeiten.length;
     private Dimension d;
     private Color feldFarbe;
@@ -584,7 +584,6 @@ public class Board extends JPanel implements ActionListener {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-
         doDrawing(g);
     }
 
