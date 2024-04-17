@@ -64,7 +64,7 @@ public class Board extends JPanel implements ActionListener {
     private int pacAnimDir = 1;
     private int pacmanAnimPos = 0;
     private int geisterAnzahl = 6;
-    private int leben, score;
+    private int score;
     private int[] dx, dy;
     private Geist[] geisterArray; // Hier sind alle Geister enthalten
 
@@ -158,7 +158,7 @@ public class Board extends JPanel implements ActionListener {
         s = "Score: " + score;
         g.drawString(s, bildschirmGroese / 2 + 230, bildschirmGroese + 20);
         // Für jedes Leben, das noch übrig ist wird ein Pacman gezeichnet
-        for (i = 0; i < leben; i++) {
+        for (i = 0; i < pacman.leben; i++) {
             g.drawImage(pacman.links[2], i * 28 + 8, bildschirmGroese + 1, this);
         }
     }
@@ -192,8 +192,8 @@ public class Board extends JPanel implements ActionListener {
     }
 
     private void death() {
-        leben--;
-        if (leben == 0) {
+        pacman.leben--;
+        if (pacman.leben == 0) {
             imSpiel = false;
         }
         continueLevel();
@@ -263,10 +263,10 @@ public class Board extends JPanel implements ActionListener {
 
             }
             //Portal
-            if (geisterArray[i].x > 630)
-                geisterArray[i].x = 0;
-            else if (geisterArray[i].x < 0)
-                geisterArray[i].x = 630;
+            if (geisterArray[i].x > 622)
+                geisterArray[i].x = 2;
+            else if (geisterArray[i].x < 2)
+                geisterArray[i].x = 622;
 
             geisterArray[i].x = geisterArray[i].x + (geisterArray[i].dx * geisterArray[i].geschwindigkeit);
             geisterArray[i].y = geisterArray[i].y + (geisterArray[i].dy * geisterArray[i].geschwindigkeit);
@@ -420,7 +420,7 @@ public class Board extends JPanel implements ActionListener {
 
     private void initGame() {
         // Die Variabeln werden hier verändert
-        leben = 3;
+        pacman.leben = 3;
         score = 0;
         initLevel();
         geisterAnzahl = 6;
