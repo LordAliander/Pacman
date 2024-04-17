@@ -19,6 +19,8 @@ public class Board extends JPanel implements ActionListener {
 
     private final int maxGeisterAnzahl = 12;
 
+    Pacman pacman = new Pacman();
+
     // In dieser Array befinden sich die Informationen über das Spielfeld
     // Hier sind keine Informationen über die Lage von den Geistern oder Pacman enthalten
     // !!Es handelt sich um eine eindimensionale array, unglaublich!!
@@ -65,10 +67,6 @@ public class Board extends JPanel implements ActionListener {
     private int leben, score;
     private int[] dx, dy;
     private Geist[] geisterArray; // Hier sind alle Geister enthalten
-    private Image pacman1up, pacman2up, pacman3up, pacman4up;
-    private Image pacman1right, pacman2right, pacman3right, pacman4right;
-    private Image pacman1down, pacman2down, pacman3down, pacman4down;
-    private Image pacman1left, pacman2left, pacman3left, pacman4left;
 
 
     private int pacman_x, pacman_y; // Position von Pacman
@@ -82,8 +80,8 @@ public class Board extends JPanel implements ActionListener {
     // Das ist der Entry-Point des Programms
     // Hier wird alles geladen, damit das Spiel laufen kann, es beginnt jedoch erst, falls 's' gedrückt wird
     public Board() {
-        loadImages();
         initVariables();
+        loadImages();
         initBoard();
     }
 
@@ -98,22 +96,7 @@ public class Board extends JPanel implements ActionListener {
         screenData = new short[feldAnzahl * feldAnzahl];
         feldFarbe = new Color(5, 100, 5);
         d = new Dimension(624, 690);
-        // In jedem Index dieser Array ist Geisterspezifische Information enthalten
-        // Dies könnte und sollte man mit einer Klasse austauschen
         geisterArray = new Geist[maxGeisterAnzahl];
-        for (int i = 0; i < geisterArray.length; ++i) {
-            geisterArray[i] = new Geist();
-            String[] farben = {"rot", "pink", "blau", "orange"};
-            Random random = new Random();
-            int randomIndex = random.nextInt(farben.length);
-            String randomElement = farben[randomIndex];
-            // Hier muss eine zufällige Farbe ausgewählt, werden, damit jeder Geist eine andere Farbe hat
-            geisterArray[i].oben = new ImageIcon("src/resources/images/meineKunst/geist/"+randomElement+"/geist_oben.png").getImage();
-            geisterArray[i].unten = new ImageIcon("src/resources/images/meineKunst/geist/"+randomElement+"/geist_unten.png").getImage();
-            geisterArray[i].links = new ImageIcon("src/resources/images/meineKunst/geist/"+randomElement+"/geist_links.png").getImage();
-            geisterArray[i].rechts = new ImageIcon("src/resources/images/meineKunst/geist/"+randomElement+"/geist_rechts.png").getImage();
-        }
-
         dx = new int[4];
         dy = new int[4];
         timer = new Timer(40, this);
@@ -176,7 +159,7 @@ public class Board extends JPanel implements ActionListener {
         g.drawString(s, bildschirmGroese / 2 + 230, bildschirmGroese + 20);
         // Für jedes Leben, das noch übrig ist wird ein Pacman gezeichnet
         for (i = 0; i < leben; i++) {
-            g.drawImage(pacman3left, i * 28 + 8, bildschirmGroese + 1, this);
+            g.drawImage(pacman.links[2], i * 28 + 8, bildschirmGroese + 1, this);
         }
     }
 
@@ -209,13 +192,10 @@ public class Board extends JPanel implements ActionListener {
     }
 
     private void death() {
-
         leben--;
-
         if (leben == 0) {
             imSpiel = false;
         }
-
         continueLevel();
     }
 
@@ -371,94 +351,23 @@ public class Board extends JPanel implements ActionListener {
         else if (pacman_x < -5)
             pacman_x = 630;
         // Hier wird die Position verändert
-        
+
         int pacmanGeschwindigkeit = 6;
         pacman_x = pacman_x + pacmanGeschwindigkeit * pacmand_x;
         pacman_y = pacman_y + pacmanGeschwindigkeit * pacmand_y;
     }
 
     private void drawPacman(Graphics2D g2d) {
-
+        // Das war ein Sieg
+        // Das zeichnen von Pacman hat vorher 80 Zeilen gebraucht SIEG!!!
         if (view_dx == -1) {
-            drawPacnanLeft(g2d);
+            g2d.drawImage(pacman.links[pacmanAnimPos], pacman_x+1, pacman_y+1, this);
         } else if (view_dx == 1) {
-            drawPacmanRight(g2d);
+            g2d.drawImage(pacman.rechts[pacmanAnimPos], pacman_x+1, pacman_y+1, this);
         } else if (view_dy == -1) {
-            drawPacmanUp(g2d);
+            g2d.drawImage(pacman.oben[pacmanAnimPos], pacman_x+1, pacman_y+1, this);
         } else {
-            drawPacmanDown(g2d);
-        }
-    }
-
-    private void drawPacmanUp(Graphics2D g2d) {
-
-        switch (pacmanAnimPos) {
-            case 1:
-                g2d.drawImage(pacman2up, pacman_x + 1, pacman_y + 1, this);
-                break;
-            case 2:
-                g2d.drawImage(pacman3up, pacman_x + 1, pacman_y + 1, this);
-                break;
-            case 3:
-                g2d.drawImage(pacman4up, pacman_x + 1, pacman_y + 1, this);
-                break;
-            default:
-                g2d.drawImage(pacman1up, pacman_x + 1, pacman_y + 1, this);
-                break;
-        }
-    }
-
-    private void drawPacmanDown(Graphics2D g2d) {
-
-        switch (pacmanAnimPos) {
-            case 1:
-                g2d.drawImage(pacman2down, pacman_x + 1, pacman_y + 1, this);
-                break;
-            case 2:
-                g2d.drawImage(pacman3down, pacman_x + 1, pacman_y + 1, this);
-                break;
-            case 3:
-                g2d.drawImage(pacman4down, pacman_x + 1, pacman_y + 1, this);
-                break;
-            default:
-                g2d.drawImage(pacman1down, pacman_x + 1, pacman_y + 1, this);
-                break;
-        }
-    }
-
-    private void drawPacnanLeft(Graphics2D g2d) {
-
-        switch (pacmanAnimPos) {
-            case 1:
-                g2d.drawImage(pacman2left, pacman_x + 1, pacman_y + 1, this);
-                break;
-            case 2:
-                g2d.drawImage(pacman3left, pacman_x + 1, pacman_y + 1, this);
-                break;
-            case 3:
-                g2d.drawImage(pacman4left, pacman_x + 1, pacman_y + 1, this);
-                break;
-            default:
-                g2d.drawImage(pacman1left, pacman_x + 1, pacman_y + 1, this);
-                break;
-        }
-    }
-
-    private void drawPacmanRight(Graphics2D g2d) {
-
-        switch (pacmanAnimPos) {
-            case 1:
-                g2d.drawImage(pacman2right, pacman_x + 1, pacman_y + 1, this);
-                break;
-            case 2:
-                g2d.drawImage(pacman3right, pacman_x + 1, pacman_y + 1, this);
-                break;
-            case 3:
-                g2d.drawImage(pacman4right, pacman_x + 1, pacman_y + 1, this);
-                break;
-            default:
-                g2d.drawImage(pacman1right, pacman_x + 1, pacman_y + 1, this);
-                break;
+            g2d.drawImage(pacman.unten[pacmanAnimPos], pacman_x+1, pacman_y+1, this);
         }
     }
 
@@ -569,26 +478,41 @@ public class Board extends JPanel implements ActionListener {
     }
 
     private void loadImages() {
-        // Hier werden alle benötigten Bilder in das Spiel geladen
-        pacman1up = new ImageIcon("src/resources/images/meineKunst/pacman/pacman_oben0.png").getImage();
-        pacman2up = new ImageIcon("src/resources/images/meineKunst/pacman/pacman_oben1.png").getImage();
-        pacman3up = new ImageIcon("src/resources/images/meineKunst/pacman/pacman_oben2.png").getImage();
-        pacman4up = new ImageIcon("src/resources/images/meineKunst/pacman/pacman_oben3.png").getImage();
-
-        pacman1down = new ImageIcon("src/resources/images/meineKunst/pacman/pacman_unten0.png").getImage();
-        pacman2down = new ImageIcon("src/resources/images/meineKunst/pacman/pacman_unten1.png").getImage();
-        pacman3down = new ImageIcon("src/resources/images/meineKunst/pacman/pacman_unten2.png").getImage();
-        pacman4down = new ImageIcon("src/resources/images/meineKunst/pacman/pacman_unten3.png").getImage();
-
-        pacman1left = new ImageIcon("src/resources/images/meineKunst/pacman/pacman_links0.png").getImage();
-        pacman2left = new ImageIcon("src/resources/images/meineKunst/pacman/pacman_links1.png").getImage();
-        pacman3left = new ImageIcon("src/resources/images/meineKunst/pacman/pacman_links2.png").getImage();
-        pacman4left = new ImageIcon("src/resources/images/meineKunst/pacman/pacman_links3.png").getImage();
-
-        pacman1right = new ImageIcon("src/resources/images/meineKunst/pacman/pacman_rechts0.png").getImage();
-        pacman2right = new ImageIcon("src/resources/images/meineKunst/pacman/pacman_rechts1.png").getImage();
-        pacman3right = new ImageIcon("src/resources/images/meineKunst/pacman/pacman_rechts2.png").getImage();
-        pacman4right = new ImageIcon("src/resources/images/meineKunst/pacman/pacman_rechts3.png").getImage();
+        // Man soll beachten, dass es 32 unterschiedliche Bilder im Spiel gibt
+        // Ich bin sehr zufrieden mit dieser Import-Logik
+        // Laden der Bilder für die Geister
+        for (int i = 0; i < geisterArray.length; ++i) {
+            geisterArray[i] = new Geist();
+            String[] farben = {"rot", "pink", "blau", "orange"};
+            Random random = new Random();
+            int randomIndex = random.nextInt(farben.length);
+            String randomElement = farben[randomIndex];
+            // Hier muss eine zufällige Farbe ausgewählt, werden, damit jeder Geist eine andere Farbe hat
+            geisterArray[i].oben = new ImageIcon("src/resources/images/meineKunst/geist/"+randomElement+"/geist_oben.png").getImage();
+            geisterArray[i].unten = new ImageIcon("src/resources/images/meineKunst/geist/"+randomElement+"/geist_unten.png").getImage();
+            geisterArray[i].links = new ImageIcon("src/resources/images/meineKunst/geist/"+randomElement+"/geist_links.png").getImage();
+            geisterArray[i].rechts = new ImageIcon("src/resources/images/meineKunst/geist/"+randomElement+"/geist_rechts.png").getImage();
+        }
+        // Laden der Bilder für Pacman
+        String[] richtungen = {"oben", "unten", "links", "rechts"};
+        for (String x : richtungen) {
+            for (int i = 0; i <= 3; ++i){
+                switch(x) {
+                    case "oben":
+                        pacman.oben[i] = new ImageIcon("src/resources/images/meineKunst/pacman/pacman_oben"+i+".png").getImage();
+                        break;
+                    case "unten":
+                        pacman.unten[i] = new ImageIcon("src/resources/images/meineKunst/pacman/pacman_unten"+i+".png").getImage();
+                        break;
+                    case "links":
+                        pacman.links[i] = new ImageIcon("src/resources/images/meineKunst/pacman/pacman_links"+i+".png").getImage();
+                        break;
+                    case "rechts":
+                        pacman.rechts[i] = new ImageIcon("src/resources/images/meineKunst/pacman/pacman_rechts"+i+".png").getImage();
+                        break;
+                }
+            }
+        }
 
     }
 
