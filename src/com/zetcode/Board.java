@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.Random;
 
 public class Board extends JPanel implements ActionListener {
 
@@ -31,7 +32,7 @@ public class Board extends JPanel implements ActionListener {
             17, 20,  0,  0, 19, 18, 18, 18, 26, 26, 16, 16, 16, 16, 16, 16, 26, 26, 18, 18, 18, 22,  0,  0, 17, 20,
             17, 20,  0,  0, 17, 16, 16, 20,  0,  0, 17, 24, 24, 24, 24, 20,  0,  0, 17, 16, 16, 20,  0,  0, 17, 20,
             17, 20,  0,  0, 17, 16, 16, 24, 18, 18, 20,  0,  0,  0,  0, 17, 18, 18, 24, 16, 16, 20,  0,  0, 17, 20,
-            24, 24, 26, 26, 24, 16, 20,  0, 17, 16, 20,  0,  0,  0,  0, 17, 16, 20,  0, 17, 16, 24, 26, 26, 24, 24,
+            25, 24, 26, 26, 24, 16, 20,  0, 17, 16, 20,  0,  0,  0,  0, 17, 16, 20,  0, 17, 16, 24, 26, 26, 24, 28,
              0,  0,  0,  0,  0, 17, 20,  0, 17, 16, 16, 18, 18, 18, 18, 16, 16, 20,  0, 17, 20,  0,  0,  0,  0,  0,
              0,  0,  0,  0,  0, 17, 20,  0, 17, 16, 24, 24, 16, 16, 24, 24, 16, 20,  0, 17, 20,  0,  0,  0,  0,  0,
              2,  2,  2,  2,  2, 16, 20,  0, 17, 20,  3,  2,  0,  0,  2,  6, 17, 20,  0, 17, 16,  2,  2,  2,  2,  2,
@@ -64,7 +65,6 @@ public class Board extends JPanel implements ActionListener {
     private int leben, score;
     private int[] dx, dy;
     private Geist[] geisterArray; // Hier sind alle Geister enthalten
-    private Image geist;
     private Image pacman1up, pacman2up, pacman3up, pacman4up;
     private Image pacman1right, pacman2right, pacman3right, pacman4right;
     private Image pacman1down, pacman2down, pacman3down, pacman4down;
@@ -101,8 +101,18 @@ public class Board extends JPanel implements ActionListener {
         // In jedem Index dieser Array ist Geisterspezifische Information enthalten
         // Dies könnte und sollte man mit einer Klasse austauschen
         geisterArray = new Geist[maxGeisterAnzahl];
-        for (int i = 0; i < geisterArray.length; ++i)
+        for (int i = 0; i < geisterArray.length; ++i) {
             geisterArray[i] = new Geist();
+            String[] farben = {"rot", "pink", "blau", "orange"};
+            Random random = new Random();
+            int randomIndex = random.nextInt(farben.length);
+            String randomElement = farben[randomIndex];
+            // Hier muss eine zufällige Farbe ausgewählt, werden, damit jeder Geist eine andere Farbe hat
+            geisterArray[i].oben = new ImageIcon("src/resources/images/meineKunst/geist/"+randomElement+"/geist_oben.png").getImage();
+            geisterArray[i].unten = new ImageIcon("src/resources/images/meineKunst/geist/"+randomElement+"/geist_unten.png").getImage();
+            geisterArray[i].links = new ImageIcon("src/resources/images/meineKunst/geist/"+randomElement+"/geist_links.png").getImage();
+            geisterArray[i].rechts = new ImageIcon("src/resources/images/meineKunst/geist/"+randomElement+"/geist_rechts.png").getImage();
+        }
 
         dx = new int[4];
         dy = new int[4];
@@ -275,7 +285,8 @@ public class Board extends JPanel implements ActionListener {
 
             geisterArray[i].x = geisterArray[i].x + (geisterArray[i].dx * geisterArray[i].geschwindigkeit);
             geisterArray[i].y = geisterArray[i].y + (geisterArray[i].dy * geisterArray[i].geschwindigkeit);
-            drawGhost(g2d, geisterArray[i].x + 1, geisterArray[i].y + 1);
+            // Here we have to pass also the directional information
+            drawGhost(g2d, geisterArray[i].x + 1, geisterArray[i].y + 1, i, geisterArray[i].dx, geisterArray[i].dy);
 
             // Hier wird die Kollision zwischen Pacman und einem Geist registriert
             if (pacman_x > (geisterArray[i].x - 12) && pacman_x < (geisterArray[i].x + 12)
@@ -287,9 +298,16 @@ public class Board extends JPanel implements ActionListener {
         }
     }
 
-    private void drawGhost(Graphics2D g2d, int x, int y) {
+    private void drawGhost(Graphics2D g2d, int x, int y, int index, int dir_x, int dir_y) {
+        if (dir_x == -1)
+            g2d.drawImage(geisterArray[index].links, x, y, this);
+        if (dir_x == 1)
+            g2d.drawImage(geisterArray[index].rechts, x, y, this);
+        if (dir_y == -1)
+            g2d.drawImage(geisterArray[index].oben, x, y, this);
+        if (dir_y == 1)
+            g2d.drawImage(geisterArray[index].unten, x, y, this);
 
-        g2d.drawImage(geist, x, y, this);
     }
 
     // Diese Funktion muss ich mir noch gut anschauen
@@ -541,27 +559,25 @@ public class Board extends JPanel implements ActionListener {
 
     private void loadImages() {
         // Hier werden alle benötigten Bilder in das Spiel geladen
-        geist = new ImageIcon("src/resources/images/ghost.png").getImage();
+        pacman1up = new ImageIcon("src/resources/images/meineKunst/pacman/pacman_oben0.png").getImage();
+        pacman2up = new ImageIcon("src/resources/images/meineKunst/pacman/pacman_oben1.png").getImage();
+        pacman3up = new ImageIcon("src/resources/images/meineKunst/pacman/pacman_oben2.png").getImage();
+        pacman4up = new ImageIcon("src/resources/images/meineKunst/pacman/pacman_oben3.png").getImage();
 
-        pacman1up = new ImageIcon("src/resources/images/meineKunst/pacman_oben0.png").getImage();
-        pacman2up = new ImageIcon("src/resources/images/meineKunst/pacman_oben1.png").getImage();
-        pacman3up = new ImageIcon("src/resources/images/meineKunst/pacman_oben2.png").getImage();
-        pacman4up = new ImageIcon("src/resources/images/meineKunst/pacman_oben3.png").getImage();
+        pacman1down = new ImageIcon("src/resources/images/meineKunst/pacman/pacman_unten0.png").getImage();
+        pacman2down = new ImageIcon("src/resources/images/meineKunst/pacman/pacman_unten1.png").getImage();
+        pacman3down = new ImageIcon("src/resources/images/meineKunst/pacman/pacman_unten2.png").getImage();
+        pacman4down = new ImageIcon("src/resources/images/meineKunst/pacman/pacman_unten3.png").getImage();
 
-        pacman1down = new ImageIcon("src/resources/images/meineKunst/pacman_unten0.png").getImage();
-        pacman2down = new ImageIcon("src/resources/images/meineKunst/pacman_unten1.png").getImage();
-        pacman3down = new ImageIcon("src/resources/images/meineKunst/pacman_unten2.png").getImage();
-        pacman4down = new ImageIcon("src/resources/images/meineKunst/pacman_unten3.png").getImage();
+        pacman1left = new ImageIcon("src/resources/images/meineKunst/pacman/pacman_links0.png").getImage();
+        pacman2left = new ImageIcon("src/resources/images/meineKunst/pacman/pacman_links1.png").getImage();
+        pacman3left = new ImageIcon("src/resources/images/meineKunst/pacman/pacman_links2.png").getImage();
+        pacman4left = new ImageIcon("src/resources/images/meineKunst/pacman/pacman_links3.png").getImage();
 
-        pacman1left = new ImageIcon("src/resources/images/meineKunst/pacman_links0.png").getImage();
-        pacman2left = new ImageIcon("src/resources/images/meineKunst/pacman_links1.png").getImage();
-        pacman3left = new ImageIcon("src/resources/images/meineKunst/pacman_links2.png").getImage();
-        pacman4left = new ImageIcon("src/resources/images/meineKunst/pacman_links3.png").getImage();
-
-        pacman1right = new ImageIcon("src/resources/images/meineKunst/pacman_rechts0.png").getImage();
-        pacman2right = new ImageIcon("src/resources/images/meineKunst/pacman_rechts1.png").getImage();
-        pacman3right = new ImageIcon("src/resources/images/meineKunst/pacman_rechts2.png").getImage();
-        pacman4right = new ImageIcon("src/resources/images/meineKunst/pacman_rechts3.png").getImage();
+        pacman1right = new ImageIcon("src/resources/images/meineKunst/pacman/pacman_rechts0.png").getImage();
+        pacman2right = new ImageIcon("src/resources/images/meineKunst/pacman/pacman_rechts1.png").getImage();
+        pacman3right = new ImageIcon("src/resources/images/meineKunst/pacman/pacman_rechts2.png").getImage();
+        pacman4right = new ImageIcon("src/resources/images/meineKunst/pacman/pacman_rechts3.png").getImage();
 
     }
 
