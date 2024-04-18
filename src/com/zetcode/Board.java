@@ -263,6 +263,7 @@ public class Board extends JPanel implements ActionListener {
 
             }
             //Portal
+            // Geitster Portal buggt
             if (geisterArray[i].x > 622)
                 geisterArray[i].x = 2;
             else if (geisterArray[i].x < 2)
