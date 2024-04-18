@@ -27,7 +27,7 @@ public class Board extends JPanel implements ActionListener {
     private final short[] levelData = {
             19, 26, 26, 26, 18, 18, 26, 26, 18, 18, 18, 22,  2,  2, 19, 18, 18, 18, 26, 26, 18, 18, 26, 26, 26, 22,
             21,  0,  0,  0, 17, 20,  0,  0, 17, 16, 16, 20,  0,  0, 17, 16, 16, 20,  0,  0, 17, 20,  0,  0,  0, 21,
-            21,  0,  0,  0, 17, 20,  0,  0, 17, 16, 16, 20,  0,  0, 17, 16, 16, 20,  0,  0, 17, 20,  0,  0,  0, 21,
+            21,  0,  0,  0, 17, 20,  0,  0, 17, 16, 16, 52,  0,  0, 17, 16, 16, 20,  0,  0, 17, 20,  0,  0,  0, 21,
             17, 18, 26, 26, 24, 24, 26, 26, 24, 24, 16, 20,  0,  0, 17, 16, 24, 24, 26, 26, 24, 24, 26, 26, 18, 20,
             17, 20,  0,  0,  0,  0,  0,  0,  0,  0, 17, 16, 18, 18, 16, 20,  0,  0,  0,  0,  0,  0,  0,  0, 17, 20,
             17, 20,  0,  0,  0,  0,  0,  0,  0,  0, 17, 16, 16, 16, 16, 20,  0,  0,  0,  0,  0,  0,  0,  0, 17, 20,
@@ -77,6 +77,9 @@ public class Board extends JPanel implements ActionListener {
     private short[] screenData; // Hier wird die Information über das Spielfeld gespeichert
     private Timer timer;
 
+    private boolean essbar = false;
+    private int animationPos = 0;
+    private int animationDelay = 5;
     // Das ist der Entry-Point des Programms
     // Hier wird alles geladen, damit das Spiel laufen kann, es beginnt jedoch erst, falls 's' gedrückt wird
     public Board() {
@@ -120,6 +123,12 @@ public class Board extends JPanel implements ActionListener {
                 pacAnimDir = -pacAnimDir;
             }
         }
+    }
+    
+    private void geisterAnimation() {
+        if (animationPos == 0)
+            animationPos = 1;
+        else animationPos = 0;
     }
 
     private void playGame(Graphics2D g2d) {
@@ -274,6 +283,7 @@ public class Board extends JPanel implements ActionListener {
             // Here we have to pass also the directional information
             drawGhost(g2d, geisterArray[i].x + 1, geisterArray[i].y + 1, i, geisterArray[i].dx, geisterArray[i].dy);
 
+
             // Hier wird die Kollision zwischen Pacman und einem Geist registriert
             if (pacman_x > (geisterArray[i].x - 12) && pacman_x < (geisterArray[i].x + 12)
                     && pacman_y > (geisterArray[i].y - 12) && pacman_y < (geisterArray[i].y + 12)
@@ -285,15 +295,20 @@ public class Board extends JPanel implements ActionListener {
     }
 
     private void drawGhost(Graphics2D g2d, int x, int y, int index, int dir_x, int dir_y) {
-        if (dir_x == -1)
-            g2d.drawImage(geisterArray[index].links, x, y, this);
-        if (dir_x == 1)
-            g2d.drawImage(geisterArray[index].rechts, x, y, this);
-        if (dir_y == -1)
-            g2d.drawImage(geisterArray[index].oben, x, y, this);
-        if (dir_y == 1)
-            g2d.drawImage(geisterArray[index].unten, x, y, this);
-
+        if (! essbar) {
+            if (dir_x == -1)
+                g2d.drawImage(geisterArray[index].links, x, y, this);
+            if (dir_x == 1)
+                g2d.drawImage(geisterArray[index].rechts, x, y, this);
+            if (dir_y == -1)
+                g2d.drawImage(geisterArray[index].oben, x, y, this);
+            if (dir_y == 1)
+                g2d.drawImage(geisterArray[index].unten, x, y, this);
+        } else {
+            if (animationPos == 0)
+                g2d.drawImage(geisterArray[index].essbar1, x, y, this);
+            else g2d.drawImage(geisterArray[index].essbar2, x, y, this);
+        }
     }
 
     // Diese Funktion muss ich mir noch gut anschauen
@@ -318,6 +333,10 @@ public class Board extends JPanel implements ActionListener {
             if ((ch & 16) != 0) {
                 screenData[pos] = (short) (ch & 15);
                 score++;
+            }
+
+            if ((ch & 32) != 0) {
+                essbar = true;
             }
 
             // Hier wird geschaut ob der Spieler will, dass sich Pacman in eine gewisse Richtung bewegt
@@ -493,7 +512,10 @@ public class Board extends JPanel implements ActionListener {
             geisterArray[i].unten = new ImageIcon("src/resources/images/meineKunst/geist/"+randomElement+"/geist_unten.png").getImage();
             geisterArray[i].links = new ImageIcon("src/resources/images/meineKunst/geist/"+randomElement+"/geist_links.png").getImage();
             geisterArray[i].rechts = new ImageIcon("src/resources/images/meineKunst/geist/"+randomElement+"/geist_rechts.png").getImage();
+            geisterArray[i].essbar1 = new ImageIcon("src/resources/images/meineKunst/geist/essbar/geist1.png").getImage();
+            geisterArray[i].essbar2 = new ImageIcon("src/resources/images/meineKunst/geist/essbar/geist2.png").getImage();
         }
+
         // Laden der Bilder für Pacman
         String[] richtungen = {"oben", "unten", "links", "rechts"};
         for (String x : richtungen) {
@@ -533,6 +555,13 @@ public class Board extends JPanel implements ActionListener {
         drawMaze(g2d);
         drawScore(g2d);
         animation();
+
+        if(essbar && animationDelay >= 15) {
+            geisterAnimation();
+            animationDelay = 0;
+        } else {
+            animationDelay ++;
+        }
 
         if (imSpiel) {
             playGame(g2d);

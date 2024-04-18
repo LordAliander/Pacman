@@ -4,6 +4,7 @@ import java.awt.Image;
 
 public class Geist {
     Image oben, unten, links, rechts;
+    Image essbar1, essbar2;
     public int farbe;
     public int x, y; // Position des Geists
     public int dx, dy; // Bewegungsrichtung des Geists
