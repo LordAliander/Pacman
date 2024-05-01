@@ -20,6 +20,11 @@ public class Board extends JPanel implements ActionListener {
     private final int maxGeisterAnzahl = 12;
 
     Pacman pacman = new Pacman();
+    private Drop[] dropArray;
+    private boolean gezeichnet = false;
+    private int dropZahl;
+
+    Random random = new Random();
 
     // In dieser Array befinden sich die Informationen über das Spielfeld
     // Hier sind keine Informationen über die Lage von den Geistern oder Pacman enthalten
@@ -27,11 +32,11 @@ public class Board extends JPanel implements ActionListener {
     private final short[] levelData = {
             19, 26, 26, 26, 18, 18, 26, 26, 18, 18, 18, 22,  2,  2, 19, 18, 18, 18, 26, 26, 18, 18, 26, 26, 26, 22,
             21,  0,  0,  0, 17, 20,  0,  0, 17, 16, 16, 20,  0,  0, 17, 16, 16, 20,  0,  0, 17, 20,  0,  0,  0, 21,
-            21,  0,  0,  0, 17, 20,  0,  0, 17, 16, 16, 52,  0,  0, 17, 16, 16, 20,  0,  0, 17, 20,  0,  0,  0, 21,
+            21,  0,  0,  0, 17, 20,  0,  0, 17, 16, 16, 52,  0,  0, 49, 16, 16, 20,  0,  0, 17, 20,  0,  0,  0, 21,
             17, 18, 26, 26, 24, 24, 26, 26, 24, 24, 16, 20,  0,  0, 17, 16, 24, 24, 26, 26, 24, 24, 26, 26, 18, 20,
             17, 20,  0,  0,  0,  0,  0,  0,  0,  0, 17, 16, 18, 18, 16, 20,  0,  0,  0,  0,  0,  0,  0,  0, 17, 20,
             17, 20,  0,  0,  0,  0,  0,  0,  0,  0, 17, 16, 16, 16, 16, 20,  0,  0,  0,  0,  0,  0,  0,  0, 17, 20,
-            17, 20,  0,  0, 19, 18, 18, 18, 26, 26, 16, 16, 16, 16, 16, 16, 26, 26, 18, 18, 18, 22,  0,  0, 17, 20,
+            17, 20,  0,  0, 51, 18, 18, 18, 26, 26, 16, 16, 16, 16, 16, 16, 26, 26, 18, 18, 18, 54,  0,  0, 17, 20,
             17, 20,  0,  0, 17, 16, 16, 20,  0,  0, 17, 24, 24, 24, 24, 20,  0,  0, 17, 16, 16, 20,  0,  0, 17, 20,
             17, 20,  0,  0, 17, 16, 16, 24, 18, 18, 20,  0,  0,  0,  0, 17, 18, 18, 24, 16, 16, 20,  0,  0, 17, 20,
             25, 24, 26, 26, 24, 16, 20,  0, 17, 16, 20,  0,  0,  0,  0, 17, 16, 20,  0, 17, 16, 24, 26, 26, 24, 28,
@@ -48,7 +53,7 @@ public class Board extends JPanel implements ActionListener {
             21,  0, 17, 16, 20,  0,  0,  0,  0, 21,  0,  0,  0,  0,  0,  0, 21,  0,  0,  0,  0, 17, 16, 20,  0, 21,
             21,  0, 17, 16, 20,  0,  0,  0,  0, 21,  0,  0,  0,  0,  0,  0, 21,  0,  0,  0,  0, 17, 16, 20,  0, 21,
             21,  0, 17, 16, 16, 18, 18, 22,  0, 17, 18, 22,  0,  0, 19, 18, 20,  0, 19, 18, 18, 16, 16, 20,  0, 21,
-            21,  0, 25, 24, 24, 24, 16, 20,  0, 17, 16, 20,  0,  0, 17, 16, 20,  0, 17, 16, 24, 24, 24, 28,  0, 21,
+            21,  0, 57, 24, 24, 24, 16, 20,  0, 17, 16, 20,  0,  0, 17, 16, 20,  0, 17, 16, 24, 24, 24, 60,  0, 21,
             21,  0,  0,  0,  0,  0, 17, 16, 18, 16, 16, 24, 26, 26, 24, 16, 16, 18, 16, 20,  0,  0,  0,  0,  0, 21,
             25, 26, 26, 26, 26, 26, 24, 24, 24, 24, 28,  0,  0,  0,  0, 25, 24, 24, 24, 24, 26, 26, 26, 26, 26, 28
     };
@@ -101,6 +106,7 @@ public class Board extends JPanel implements ActionListener {
         feldFarbe = new Color(5, 100, 5);
         d = new Dimension(624, 690);
         geisterArray = new Geist[maxGeisterAnzahl];
+        dropArray = new Drop[4];
         dx = new int[4];
         dy = new int[4];
         timer = new Timer(40, this);
@@ -176,6 +182,11 @@ public class Board extends JPanel implements ActionListener {
     private void checkMaze() {
         short i = 0;
         boolean finished = true;
+        // 1 : 000
+        if (0 == random.nextInt(1000) && ((screenData[195] & 64) == 0)) {
+            screenData[195] += 64;
+            gezeichnet = false;
+        }
         // Hier wird nachgeschaut ob alle Punkte gegessen wurden
         while (i < feldAnzahl * feldAnzahl && finished) {
             if ((screenData[i] & 48) != 0) {
@@ -347,9 +358,12 @@ public class Board extends JPanel implements ActionListener {
                 screenData[pos] = (short) (ch & 15);
                 score++;
             }
-
             if ((ch & 32) != 0) {
                 essbar = true;
+            }
+            if ((ch & 64) != 0) {
+                screenData[195] -= 64;
+                score += 150;
             }
 
             // Hier wird geschaut ob der Spieler will, dass sich Pacman in eine gewisse Richtung bewegt
@@ -446,6 +460,14 @@ public class Board extends JPanel implements ActionListener {
                     g2d.fillOval(x+7, y+7, 8, 8);
                 }
 
+                if ((screenData[i] & 64) != 0) {
+                    if (!gezeichnet) {
+                        dropZahl = random.nextInt(4);
+                    }
+                    g2d.drawImage(dropArray[dropZahl].bild, x, y, this);
+                    gezeichnet = true;
+                }
+
                 i++;
             }
         }
@@ -518,7 +540,6 @@ public class Board extends JPanel implements ActionListener {
         for (int i = 0; i < geisterArray.length; ++i) {
             geisterArray[i] = new Geist();
             String[] farben = {"rot", "pink", "blau", "orange"};
-            Random random = new Random();
             int randomIndex = random.nextInt(farben.length);
             String randomElement = farben[randomIndex];
             // Hier muss eine zufällige Farbe ausgewählt, werden, damit jeder Geist eine andere Farbe hat
@@ -528,6 +549,10 @@ public class Board extends JPanel implements ActionListener {
             geisterArray[i].rechts = new ImageIcon("src/resources/images/meineKunst/geist/"+randomElement+"/geist_rechts.png").getImage();
             geisterArray[i].essbar1 = new ImageIcon("src/resources/images/meineKunst/geist/essbar/geist1.png").getImage();
             geisterArray[i].essbar2 = new ImageIcon("src/resources/images/meineKunst/geist/essbar/geist2.png").getImage();
+        }
+        for (int i = 0; i < dropArray.length; ++i) {
+            dropArray[i] = new Drop();
+            dropArray[i].bild = new ImageIcon("src/resources/images/meineKunst/power_ups/"+(i+1)+".png").getImage();
         }
 
         // Laden der Bilder für Pacman
@@ -580,6 +605,7 @@ public class Board extends JPanel implements ActionListener {
         }
         if (essbarTimeout > 8) {
             essbar = false;
+            essbarTimeout = 0;
         }
         // Interessanter Weg um die Animationen zeitabhängig zu machen
 
