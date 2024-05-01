@@ -80,6 +80,7 @@ public class Board extends JPanel implements ActionListener {
     private boolean essbar = false;
     private int animationPos = 0;
     private int animationDelay = 5;
+    private int essbarTimeout = 0;
     // Das ist der Entry-Point des Programms
     // Hier wird alles geladen, damit das Spiel laufen kann, es beginnt jedoch erst, falls 's' gedrückt wird
     public Board() {
@@ -288,10 +289,22 @@ public class Board extends JPanel implements ActionListener {
             if (pacman_x > (geisterArray[i].x - 12) && pacman_x < (geisterArray[i].x + 12)
                     && pacman_y > (geisterArray[i].y - 12) && pacman_y < (geisterArray[i].y + 12)
                     && imSpiel) {
-
-                tot = true;
+                if (essbar) {
+                    issGeist(i);
+                } else
+                    tot = true;
             }
         }
+    }
+
+    private void issGeist(int i) {
+        erstelleNeuenGeist(i);
+        // Hier muss noch veröndert werden, dass man immer mehr Punkte bekommt
+        // Die neu Gespawnten Geister müssen ein bisschen warten, bis sie sich
+            // dazugesellen können
+        // Zudem darf Pacman nicht in das Spawn Feld
+        score += 100;
+        // noch andere Dinge
     }
 
     private void drawGhost(Graphics2D g2d, int x, int y, int index, int dir_x, int dir_y) {
@@ -458,29 +471,30 @@ public class Board extends JPanel implements ActionListener {
         continueLevel();
     }
 
-    private void continueLevel() {
-
-        short i;
+    private void erstelleNeuenGeist(int i) {
         int dx = 1;
         int random;
+        // Dies sind die Spawn Koordinaten
+        geisterArray[i].y = 13 * feldGroese;
+        geisterArray[i].x = 13 * feldGroese;
+        // Wozu sind diese beiden Variablen
+        geisterArray[i].dy = 0;
+        geisterArray[i].dx = dx;
+        // Hier wird jedem Geist eine eigene Geschwindigkeit zugeordnet
+        random = (int) (Math.random() * (currentSpeed + 1));
+
+        if (random > currentSpeed) {
+            random = currentSpeed;
+        }
+
+        geisterArray[i].geschwindigkeit = zugelasseneGeschwindigkeiten[random];
+    }
+
+    private void continueLevel() {
         // In diesem for-loop werden die Geister gespawnt
         // Zudem bekommen sie eine Geschwindigkeit
-        for (i = 0; i < geisterAnzahl; i++) {
-            // Dies sind die Spawn Koordinaten
-            geisterArray[i].y = 13 * feldGroese;
-            geisterArray[i].x = 13 * feldGroese;
-            // Wozu sind diese beiden Variablen
-            geisterArray[i].dy = 0;
-            geisterArray[i].dx = dx;
-            dx = -dx;
-            // Hier wird jedem Geist eine eigene Geschwindigkeit zugeordnet
-            random = (int) (Math.random() * (currentSpeed + 1));
-
-            if (random > currentSpeed) {
-                random = currentSpeed;
-            }
-
-            geisterArray[i].geschwindigkeit = zugelasseneGeschwindigkeiten[random];
+        for (short i = 0; i < geisterAnzahl; i++) {
+            erstelleNeuenGeist(i);
         }
         // Spawn Koordidaten von Pacman
         pacman_x = 13 * feldGroese;
@@ -556,12 +570,18 @@ public class Board extends JPanel implements ActionListener {
         drawScore(g2d);
         animation();
 
+
         if(essbar && animationDelay >= 15) {
             geisterAnimation();
             animationDelay = 0;
+            essbarTimeout++;
         } else {
             animationDelay ++;
         }
+        if (essbarTimeout > 8) {
+            essbar = false;
+        }
+        // Interessanter Weg um die Animationen zeitabhängig zu machen
 
         if (imSpiel) {
             playGame(g2d);
