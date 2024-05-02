@@ -235,6 +235,7 @@ public class Board extends JPanel implements ActionListener {
 
                 /*
                  * This can be compressed into something more concise.
+                 * All diese IF-statements speichern die Möglichen Wege, die der Geist nehmen kann.
                  */
                 if ((screenData[pos] & 1) == 0 && geisterArray[i].dx != 1) {
                     dx[count] = -1;
@@ -271,6 +272,10 @@ public class Board extends JPanel implements ActionListener {
                     }
 
                 } else {
+
+                    // Anstatt einer zufälligen Richtung sollte eine Richtung
+                    // gewählt werden, die den Geist den Pacman am nähesten bringt
+                    // Somit könnte man sich den ganzen Schmutz oben sparen
 
                     count = (int) (Math.random() * count);
 
