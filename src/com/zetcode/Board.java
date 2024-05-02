@@ -277,6 +277,10 @@ public class Board extends JPanel implements ActionListener {
                     // gewählt werden, die den Geist den Pacman am nähesten bringt
                     // Somit könnte man sich den ganzen Schmutz oben sparen
 
+                    // 1. Ermittle optimale Richtung
+                    // 2. Wenn die Richtung in der Liste ist, so führe sie aus
+                    // 3. Wenn nicht, dann zufällige Position
+
                     count = (int) (Math.random() * count);
 
                     if (count > 3) {
