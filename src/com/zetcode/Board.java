@@ -273,24 +273,47 @@ public class Board extends JPanel implements ActionListener {
 
                 } else {
 
-                    // Anstatt einer zufälligen Richtung sollte eine Richtung
-                    // gewählt werden, die den Geist den Pacman am nähesten bringt
-                    // Somit könnte man sich den ganzen Schmutz oben sparen
-
-                    // 1. Ermittle optimale Richtung
-                    // 2. Wenn die Richtung in der Liste ist, so führe sie aus
-                    // 3. Wenn nicht, dann zufällige Position
-
-                    count = (int) (Math.random() * count);
-
-                    if (count > 3) {
-                        count = 3;
+                    int optX, optY;
+                    int diffX, diffY;
+                    diffX = pacman_x - geisterArray[i].x;
+                    diffY = pacman_y - geisterArray[i].y;
+                    if (diffX > 0 && diffX > diffY) {
+                        optX = 1;
+                        optY = 0;
                     }
-
-                    geisterArray[i].dx = dx[count];
-                    geisterArray[i].dy = dy[count];
+                    else if (diffX < 0 && diffX > diffY) {
+                        optX = -1;
+                        optY = 0;
+                    }
+                    else if (diffY > 0 && diffY > diffX) {
+                        optY = 1;
+                        optX = 0;
+                    }
+                    else  {
+                        optY = -1;
+                        optX = 0;
+                    }
+                    boolean found = false;
+                    for (int c = 0; c < count; ++c) {
+                        if (optY == dy[c] && optX == dx[c]) // Optimale Richtung ist in den möglichen Richtungen
+                        {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (found) {
+                        System.out.println("best");
+                        geisterArray[i].dx = optX;
+                        geisterArray[i].dy = optY;
+                    } else {
+                        count = (int) (Math.random() * count);
+                        if (count > 3) {
+                            count = 3;
+                        }
+                        geisterArray[i].dx = dx[count];
+                        geisterArray[i].dy = dy[count];
+                    }
                 }
-
             }
             //Portal
             // Geitster Portal buggt
