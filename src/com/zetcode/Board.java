@@ -131,7 +131,7 @@ public class Board extends JPanel implements ActionListener {
             }
         }
     }
-    
+
     private void geisterAnimation() {
         if (animationPos == 0)
             animationPos = 1;
@@ -272,7 +272,6 @@ public class Board extends JPanel implements ActionListener {
                     }
 
                 } else {
-
                     int optX, optY;
                     int diffX, diffY;
                     diffX = pacman_x - geisterArray[i].x;
